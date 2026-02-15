@@ -3,25 +3,40 @@ import cv2
 import numpy as np
 from PIL import Image
 
-st.title("Upload Image with OpenCV")
+st.title("Image Preprocessing Pipeline")
 
-# Upload image from user
-uploaded_file = st.file_uploader("Choose an image", type=["jpg","jpeg","png","webp"])
+uploaded_file = st.file_uploader(
+    "Upload Image",
+    type=["jpg", "jpeg", "png", "webp"]
+)
 
 if uploaded_file is not None:
-    
-    # Read image using PIL
-    image = Image.open(uploaded_file)
 
-    # Convert to numpy array
+    # Load image
+    image = Image.open(uploaded_file).convert("RGB")
     img_array = np.array(image)
 
-    # Convert RGB -> BGR (OpenCV uses BGR)
-    img_cv = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+    # RGB → BGR (OpenCV format)
+    img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
 
-    # Example OpenCV processing (Gray image)
-    gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
+    # 1️⃣ Noise Reduction (Gaussian Blur)
+    denoise = cv2.GaussianBlur(img, (5,5), 0)
 
-    # Show original and processed images
-    st.image(image, caption="Original Image")
-    st.image(gray, caption="Gray Image (OpenCV)", channels="GRAY")
+    # 2️⃣ Grayscale Conversion
+    gray = cv2.cvtColor(denoise, cv2.COLOR_BGR2GRAY)
+
+    # 3️⃣ Contrast Enhancement (CLAHE)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    contrast = clahe.apply(gray)
+
+    # 4️⃣ Thresholding (Binary)
+    _, thresh = cv2.threshold(
+        contrast, 0, 255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )
+
+    # Display results
+    st.image(image, caption="Original")
+    st.image(gray, caption="Grayscale", channels="GRAY")
+    st.image(contrast, caption="Contrast Enhanced", channels="GRAY")
+    st.image(thresh, caption="Thresholded", channels="GRAY")

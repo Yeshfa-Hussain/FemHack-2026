@@ -401,13 +401,13 @@ def main():
         
         ocr_engine = st.selectbox(
             "OCR Engine",
-            ["Groq (Llama Vision)", "Mistral AI"],
+            ["Mistral AI"],
             help="Select which AI service to use for text extraction"
         )
         
         llm_provider = st.selectbox(
             "Financial Advisor AI",
-            ["Groq (Mixtral)", "Mistral AI", "Rule-Based (Offline)"],
+            ["Mistral AI"],
             help="Select AI for personalized financial advice"
         )
         
@@ -462,12 +462,12 @@ def main():
             col1, col2 = st.columns(2)
             
             with col1:
-                st.image(processed_images['original'], caption="Original", use_column_width=True)
-                st.image(processed_images['grayscale'], caption="Grayscale", channels="GRAY", use_column_width=True)
+                st.image(processed_images['original'], caption="Original", width='stretch')
+                st.image(processed_images['grayscale'], caption="Grayscale", channels="GRAY", width='stretch')
             
             with col2:
-                st.image(processed_images['contrast'], caption="Contrast Enhanced", channels="GRAY", use_column_width=True)
-                st.image(processed_images['threshold'], caption="Thresholded (for OCR)", channels="GRAY", use_column_width=True)
+                st.image(processed_images['contrast'], caption="Contrast Enhanced", channels="GRAY", width='stretch')
+                st.image(processed_images['threshold'], caption="Thresholded (for OCR)", channels="GRAY", width='stretch')
         
         with tab2:
             st.subheader("OCR Text Extraction")
